@@ -12,9 +12,6 @@ st.write("Haz tus preguntas sobre las leyes de Guatemala.")
 # Campo para ingresar la pregunta
 pregunta = st.text_input("Escribe tu pregunta aquí:")
 
-# Seleccionar la API a utilizar
-api_seleccionada = st.selectbox("Selecciona la API:", ("Together", "Perplexity"))
-
 # Función para consultar la API de Together
 def consultar_together(pregunta):
     url = "https://api.together.xyz/v1/query"
@@ -47,15 +44,23 @@ def consultar_perplexity(pregunta):
     else:
         return "Error al consultar la API de Perplexity."
 
+# Función para combinar las respuestas
+def combinar_respuestas(respuesta_together, respuesta_perplexity):
+    # Aquí podrías implementar lógica para combinar las respuestas.
+    # Por ejemplo, podrías simplemente concatenarlas, elegir la más relevante,
+    # o fusionarlas de alguna manera.
+    respuesta_final = f"Together: {respuesta_together}\n\nPerplexity: {respuesta_perplexity}"
+    return respuesta_final
+
 # Botón para enviar la pregunta
 if st.button("Consultar"):
     if pregunta:
-        if api_seleccionada == "Together":
-            respuesta = consultar_together(pregunta)
-        else:
-            respuesta = consultar_perplexity(pregunta)
+        respuesta_together = consultar_together(pregunta)
+        respuesta_perplexity = consultar_perplexity(pregunta)
+        
+        respuesta_final = combinar_respuestas(respuesta_together, respuesta_perplexity)
         
         st.write("**Respuesta:**")
-        st.write(respuesta)
+        st.write(respuesta_final)
     else:
         st.write("Por favor, escribe una pregunta.")
