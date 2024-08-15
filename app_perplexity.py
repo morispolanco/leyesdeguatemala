@@ -23,6 +23,11 @@ def consultar_together(pregunta):
         "query": pregunta
     }
     response = requests.post(url, headers=headers, json=data)
+    
+    # Depuración: Mostrar detalles de la respuesta
+    st.write(f"Together API Status Code: {response.status_code}")
+    st.write(f"Together API Response: {response.text}")
+    
     if response.status_code == 200:
         return response.json().get("response", "No se pudo obtener una respuesta.")
     else:
@@ -39,6 +44,11 @@ def consultar_perplexity(pregunta):
         "query": pregunta
     }
     response = requests.post(url, headers=headers, json=data)
+    
+    # Depuración: Mostrar detalles de la respuesta
+    st.write(f"Perplexity API Status Code: {response.status_code}")
+    st.write(f"Perplexity API Response: {response.text}")
+    
     if response.status_code == 200:
         return response.json().get("response", "No se pudo obtener una respuesta.")
     else:
@@ -46,9 +56,6 @@ def consultar_perplexity(pregunta):
 
 # Función para combinar las respuestas
 def combinar_respuestas(respuesta_together, respuesta_perplexity):
-    # Aquí podrías implementar lógica para combinar las respuestas.
-    # Por ejemplo, podrías simplemente concatenarlas, elegir la más relevante,
-    # o fusionarlas de alguna manera.
     respuesta_final = f"Together: {respuesta_together}\n\nPerplexity: {respuesta_perplexity}"
     return respuesta_final
 
