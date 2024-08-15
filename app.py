@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 import json
+import pandas as pd
+import io
 
 # Configuración de la página
 st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹", layout="wide")
@@ -62,8 +64,27 @@ if st.button("Obtener respuesta"):
             
             # Mostrar fuentes
             st.write("Fuentes:")
+            fuentes = []
             for resultado in resultados_busqueda.get('organic', [])[:3]:
-                st.write(f"- [{resultado['title']}]({resultado['link']})")
+                fuente = f"- [{resultado['title']}]({resultado['link']})"
+                st.write(fuente)
+                fuentes.append(fuente)
+            
+            # Crear un DataFrame con los resultados
+            df = pd.DataFrame({
+                'Pregunta': [pregunta],
+                'Respuesta': [respuesta],
+                'Fuentes': ['\n'.join(fuentes)]
+            })
+            
+            # Opción para exportar a CSV
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="Descargar resultados como CSV",
+                data=csv,
+                file_name="respuesta_legal_guatemala.csv",
+                mime="text/csv",
+            )
     else:
         st.warning("Por favor, ingresa una pregunta.")
 
