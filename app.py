@@ -4,6 +4,7 @@ import json
 from docx import Document
 from docx.shared import Inches
 from io import BytesIO
+import csv
 
 # Configuración de la página
 st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹", layout="wide")
@@ -64,6 +65,13 @@ def create_docx(pregunta, respuesta, fuentes):
     
     return doc
 
+def create_csv(pregunta, respuesta):
+    output = BytesIO()
+    writer = csv.writer(output)
+    writer.writerow(["Pregunta", "Respuesta"])
+    writer.writerow([pregunta, respuesta])
+    return output.getvalue()
+
 # Interfaz de usuario
 pregunta = st.text_input("Ingresa tu pregunta sobre la ley de Guatemala:")
 
@@ -92,10 +100,13 @@ if st.button("Obtener respuesta"):
             # Crear documento DOCX
             doc = create_docx(pregunta, respuesta, fuentes)
             
-            # Guardar el documento en memoria
+            # Guardar el documento DOCX en memoria
             docx_file = BytesIO()
             doc.save(docx_file)
             docx_file.seek(0)
+            
+            # Crear CSV
+            csv_file = create_csv(pregunta, respuesta)
             
             # Opción para exportar a DOCX
             st.download_button(
@@ -103,6 +114,14 @@ if st.button("Obtener respuesta"):
                 data=docx_file,
                 file_name="respuesta_legal_guatemala.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+            
+            # Opción para exportar a CSV
+            st.download_button(
+                label="Descargar resultados como CSV",
+                data=csv_file,
+                file_name="respuesta_legal_guatemala.csv",
+                mime="text/csv",
             )
     else:
         st.warning("Por favor, ingresa una pregunta.")
