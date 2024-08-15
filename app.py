@@ -1,8 +1,9 @@
 import streamlit as st
 import requests
 import json
-import pandas as pd
-import io
+from docx import Document
+from docx.shared import Inches
+from io import BytesIO
 
 # Configuración de la página
 st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹", layout="wide")
@@ -45,6 +46,24 @@ def generar_respuesta(prompt, contexto):
     response = requests.request("POST", url, headers=headers, data=payload)
     return response.json()['output']['choices'][0]['text'].strip()
 
+def create_docx(pregunta, respuesta, fuentes):
+    doc = Document()
+    doc.add_heading('Asistente Legal de Guatemala', 0)
+    
+    doc.add_heading('Pregunta', level=1)
+    doc.add_paragraph(pregunta)
+    
+    doc.add_heading('Respuesta', level=1)
+    doc.add_paragraph(respuesta)
+    
+    doc.add_heading('Fuentes', level=1)
+    for fuente in fuentes:
+        doc.add_paragraph(fuente, style='List Bullet')
+    
+    doc.add_paragraph('\nNota: Este documento fue generado por un asistente de IA. Verifica la información con fuentes oficiales o un abogado para asuntos legales importantes.')
+    
+    return doc
+
 # Interfaz de usuario
 pregunta = st.text_input("Ingresa tu pregunta sobre la ley de Guatemala:")
 
@@ -66,24 +85,24 @@ if st.button("Obtener respuesta"):
             st.write("Fuentes:")
             fuentes = []
             for resultado in resultados_busqueda.get('organic', [])[:3]:
-                fuente = f"- [{resultado['title']}]({resultado['link']})"
-                st.write(fuente)
+                fuente = f"{resultado['title']}: {resultado['link']}"
+                st.write(f"- [{resultado['title']}]({resultado['link']})")
                 fuentes.append(fuente)
             
-            # Crear un DataFrame con los resultados
-            df = pd.DataFrame({
-                'Pregunta': [pregunta],
-                'Respuesta': [respuesta],
-                'Fuentes': ['\n'.join(fuentes)]
-            })
+            # Crear documento DOCX
+            doc = create_docx(pregunta, respuesta, fuentes)
             
-            # Opción para exportar a CSV
-            csv = df.to_csv(index=False).encode('utf-8')
+            # Guardar el documento en memoria
+            docx_file = BytesIO()
+            doc.save(docx_file)
+            docx_file.seek(0)
+            
+            # Opción para exportar a DOCX
             st.download_button(
-                label="Descargar resultados como CSV",
-                data=csv,
-                file_name="respuesta_legal_guatemala.csv",
-                mime="text/csv",
+                label="Descargar resultados como DOCX",
+                data=docx_file,
+                file_name="respuesta_legal_guatemala.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             )
     else:
         st.warning("Por favor, ingresa una pregunta.")
