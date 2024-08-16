@@ -9,7 +9,7 @@ from io import BytesIO
 st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹")
 
 # Título de la aplicación
-st.title("Asistente Legal de Guatemala 🇬🇹⚖️")
+st.title("Asistente Legal de Guatemala")
 
 # Acceder a las claves de API de los secretos de Streamlit
 TOGETHER_API_KEY = st.secrets["TOGETHER_API_KEY"]
