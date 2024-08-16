@@ -6,7 +6,7 @@ from docx.shared import Inches
 from io import BytesIO
 
 # Configuración de la página
-st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹", layout="narrow")
+st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹")
 
 # Título de la aplicación
 st.title("Asistente Legal de Guatemala 🇬🇹⚖️")
