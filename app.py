@@ -6,7 +6,7 @@ from docx.shared import Inches
 from io import BytesIO
 
 # Configuración de la página
-st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹", layout="wide")
+st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹", layout="narrow")
 
 # Título de la aplicación
 st.title("Asistente Legal de Guatemala 🇬🇹⚖️")
@@ -64,14 +64,6 @@ def create_docx(pregunta, respuesta, fuentes):
 
     return doc
 
-# Estado de sesión para almacenar la respuesta y la calificación
-if 'respuesta' not in st.session_state:
-    st.session_state.respuesta = None
-if 'fuentes' not in st.session_state:
-    st.session_state.fuentes = []
-if 'calificacion' not in st.session_state:
-    st.session_state.calificacion = None
-
 # Interfaz de usuario
 pregunta = st.text_input("Ingresa tu pregunta sobre la ley de Guatemala:")
 
@@ -85,21 +77,20 @@ if st.button("Obtener respuesta"):
             # Generar respuesta
             respuesta = generar_respuesta(pregunta, contexto)
 
-            # Almacenar la respuesta y las fuentes en el estado de sesión
-            st.session_state.respuesta = respuesta
-            st.session_state.fuentes = [f"{resultado['title']}: {resultado['link']}" for resultado in resultados_busqueda.get('organic', [])[:3]]
-
             # Mostrar respuesta
             st.write("Respuesta:")
             st.write(respuesta)
 
             # Mostrar fuentes
             st.write("Fuentes:")
-            for fuente in st.session_state.fuentes:
-                st.write(f"- {fuente}")
+            fuentes = []
+            for resultado in resultados_busqueda.get('organic', [])[:3]:
+                fuente = f"{resultado['title']}: {resultado['link']}"
+                st.write(f"- [{resultado['title']}]({resultado['link']})")
+                fuentes.append(fuente)
 
             # Crear documento DOCX
-            doc = create_docx(pregunta, respuesta, st.session_state.fuentes)
+            doc = create_docx(pregunta, respuesta, fuentes)
 
             # Guardar el documento DOCX en memoria
             docx_file = BytesIO()
@@ -114,24 +105,8 @@ if st.button("Obtener respuesta"):
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             )
 
-            # Sistema de feedback
-            st.write("Califica la respuesta de 1 a 5, siendo 1 incorrecta y 5 correcta:")
-            st.session_state.calificacion = st.slider("Calificación", 1, 5, 3)
-
-            if st.button("Enviar feedback"):
-                st.write(f"Gracias por tu feedback. Calificación: {st.session_state.calificacion}")
-
     else:
         st.warning("Por favor, ingresa una pregunta.")
-
-# Mostrar la respuesta y las fuentes si están en el estado de sesión
-if st.session_state.respuesta:
-    st.write("Respuesta:")
-    st.write(st.session_state.respuesta)
-
-    st.write("Fuentes:")
-    for fuente in st.session_state.fuentes:
-        st.write(f"- {fuente}")
 
 # Agregar información en el pie de página
 st.markdown("---")
