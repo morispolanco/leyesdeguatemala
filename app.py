@@ -105,6 +105,13 @@ if st.button("Obtener respuesta"):
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             )
 
+            # Sistema de feedback
+            st.write("Califica la respuesta de 1 a 5, siendo 1 incorrecta y 5 correcta:")
+            calificacion = st.slider("Calificación", 1, 5, 3)
+
+            if st.button("Enviar feedback"):
+                st.write(f"Gracias por tu feedback. Calificación: {calificacion}")
+
     else:
         st.warning("Por favor, ingresa una pregunta.")
 
