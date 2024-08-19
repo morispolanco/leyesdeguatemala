@@ -30,10 +30,10 @@ def buscar_informacion(query):
 def generar_respuesta(prompt, contexto):
     url = "https://api.together.xyz/inference"
     payload = json.dumps({
-        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
         "prompt": f"Contexto: {contexto}\n\nPregunta: {prompt}\n\nResponde la pregunta basándote en el contexto proporcionado y tu conocimiento general sobre las leyes de Guatemala. Si no tienes suficiente información, indica que no puedes responder con certeza.\n\nRespuesta:",
         "max_tokens": 5512,
-        "temperature": 0.7,
+        "temperature": 0,
         "top_p": 0.7,
         "top_k": 50,
         "repetition_penalty": 1,
