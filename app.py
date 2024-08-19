@@ -4,7 +4,6 @@ import json
 from docx import Document
 from docx.shared import Inches
 from io import BytesIO
-import os
 
 # Configuración de la página
 st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹")
@@ -16,24 +15,7 @@ st.title("Asistente Legal de Guatemala")
 TOGETHER_API_KEY = st.secrets["TOGETHER_API_KEY"]
 SERPER_API_KEY = st.secrets["SERPER_API_KEY"]
 
-def buscar_informacion_local(query):
-    resultados = []
-    directorio = "/docs"
-    for archivo in os.listdir(directorio):
-        if archivo.endswith(".txt"):
-            ruta_completa = os.path.join(directorio, archivo)
-            with open(ruta_completa, 'r', encoding='utf-8') as f:
-                contenido = f.read()
-                if query.lower() in contenido.lower():
-                    snippet = contenido[:500]  # Primeros 500 caracteres como snippet
-                    resultados.append({
-                        "title": archivo,
-                        "link": ruta_completa,
-                        "snippet": snippet
-                    })
-    return resultados
-
-def buscar_informacion_web(query):
+def buscar_informacion(query):
     url = "https://google.serper.dev/search"
     payload = json.dumps({
         "q": query + " ley Guatemala"
@@ -43,22 +25,15 @@ def buscar_informacion_web(query):
         'Content-Type': 'application/json'
     }
     response = requests.request("POST", url, headers=headers, data=payload)
-    return response.json().get('organic', [])
-
-def buscar_informacion(query):
-    resultados_locales = buscar_informacion_local(query)
-    if resultados_locales:
-        return resultados_locales
-    else:
-        return buscar_informacion_web(query)
+    return response.json()
 
 def generar_respuesta(prompt, contexto):
     url = "https://api.together.xyz/inference"
     payload = json.dumps({
-        "model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
         "prompt": f"Contexto: {contexto}\n\nPregunta: {prompt}\n\nResponde la pregunta basándote en el contexto proporcionado y tu conocimiento general sobre las leyes de Guatemala. Si no tienes suficiente información, indica que no puedes responder con certeza.\n\nRespuesta:",
         "max_tokens": 5512,
-        "temperature": 0,
+        "temperature": 0.7,
         "top_p": 0.7,
         "top_k": 50,
         "repetition_penalty": 1,
@@ -97,7 +72,7 @@ if st.button("Obtener respuesta"):
         with st.spinner("Buscando información y generando respuesta..."):
             # Buscar información relevante
             resultados_busqueda = buscar_informacion(pregunta)
-            contexto = "\n".join([result.get('snippet', '') for result in resultados_busqueda])
+            contexto = "\n".join([result.get('snippet', '') for result in resultados_busqueda.get('organic', [])])
 
             # Generar respuesta
             respuesta = generar_respuesta(pregunta, contexto)
@@ -109,7 +84,7 @@ if st.button("Obtener respuesta"):
             # Mostrar fuentes
             st.write("Fuentes:")
             fuentes = []
-            for resultado in resultados_busqueda[:3]:
+            for resultado in resultados_busqueda.get('organic', [])[:3]:
                 fuente = f"{resultado['title']}: {resultado['link']}"
                 st.write(f"- [{resultado['title']}]({resultado['link']})")
                 fuentes.append(fuente)
@@ -135,5 +110,5 @@ if st.button("Obtener respuesta"):
 
 # Agregar información en el pie de página
 st.markdown("---")
-st.markdown("**Nota:** Este asistente utiliza IA para generar respuestas basadas en información disponible en línea y en documentos locales. "
+st.markdown("**Nota:** Este asistente utiliza IA para generar respuestas basadas en información disponible en línea. "
             "Siempre verifica la información con fuentes oficiales o un abogado para asuntos legales importantes.")
