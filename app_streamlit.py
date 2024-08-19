@@ -30,7 +30,7 @@ def buscar_informacion(query):
 def generar_respuesta(prompt, contexto):
     url = "https://api.together.xyz/inference"
     payload = json.dumps({
-        "model": "google/gemma-2-9b-it",
+        "model": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
         "prompt": f"Contexto: {contexto}\n\nPregunta: {prompt}\n\nResponde la pregunta basándote en el contexto proporcionado y tu conocimiento general sobre las leyes de Guatemala. Si no tienes suficiente información, indica que no puedes responder con certeza.\n\nRespuesta:",
         "max_tokens": 5512,
         "temperature": 0.7,
