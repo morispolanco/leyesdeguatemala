@@ -14,10 +14,11 @@ INVICTA_API_KEY = st.secrets["INVICTA_API_KEY"]
 # ID del agente de IA
 AI_AGENT_ID = "849a1645-54e1-4e08-b5a6-faf6777eefa8"
 
-def invicta_consulta():
+def invicta_consulta(user_input):
     url = f"https://api.invictai.io/api/triggers/webhooks/api-key/{AI_AGENT_ID}"
     payload = json.dumps({
         "modelName": "gpt-4",
+        "userInput": user_input,
         "variables": []
     })
     headers = {
@@ -34,7 +35,7 @@ if st.button("Obtener respuesta"):
     if pregunta:
         with st.spinner("Consultando al asistente..."):
             # Realizar consulta a Invicta
-            resultado = invicta_consulta()
+            resultado = invicta_consulta(pregunta)
 
             # Mostrar respuesta
             st.write("Respuesta:")
