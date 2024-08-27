@@ -12,7 +12,7 @@ st.title("Asistente Legal de Guatemala")
 INVICTA_API_KEY = st.secrets["INVICTA_API_KEY"]
 
 # ID del agente de IA (Agent ID)
-AGENT_ID = "https://app.invictai.io/community/849a1645-54e1-4e08-b5a6-faf6777eefa8"
+AGENT_ID = 849a1645-54e1-4e08-b5a6-faf6777eefa8
 
 # Configuración de la página
 st.set_page_config(page_title="Asistente Legal de Guatemala", page_icon="🇬🇹")
