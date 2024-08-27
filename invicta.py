@@ -11,14 +11,14 @@ st.title("Asistente Legal de Guatemala")
 # Acceder a las claves de API de los secretos de Streamlit
 INVICTA_API_KEY = st.secrets["INVICTA_API_KEY"]
 
-# ID del hilo de IA (threadId)
-THREAD_ID = "849a1645-54e1-4e08-b5a6-faf6777eefa8"
+# ID del agente de IA (Agent ID)
+AGENT_ID = "849a1645-54e1-4e08-b5a6-faf6777eefa8"
 
 def invicta_consulta(user_input):
-    url = f"https://api.invictai.io/api/triggers/webhooks/api-key/{THREAD_ID}"
+    url = f"https://api.invictai.io/api/triggers/webhooks/api-key/{AGENT_ID}"
     payload = json.dumps({
         "userInput": user_input,
-        "threadId": THREAD_ID,
+        "threadId": AGENT_ID,
         "modelName": "gpt-4",
         "variables": []
     })
