@@ -61,7 +61,6 @@ if st.button("Obtener respuesta"):
 st.markdown("---")
 st.markdown("**Nota:** Este asistente utiliza IA para generar respuestas basadas en información disponible en línea. "
             "Siempre verifica la información con fuentes oficiales o un abogado para asuntos legales importantes.")
-"
 
 def invicta_consulta(user_input):
     url = f"https://api.invictai.io/api/triggers/webhooks/api-key/{AGENT_ID}"
